@@ -42,19 +42,41 @@ async def gemini_pro_handler(message: Message, bot: TeleBot) -> None:
 # Add a new streaming command processing function
 async def gemini_stream_handler(message: Message, bot: TeleBot) -> None:
     try:
-        m = message.text.strip().split(maxsplit=1)[1].strip()
+        prompt = message.text.strip().split(maxsplit=1)[1].strip()
+        contents = {"text": prompt}
+        if message.photo:
+            file_path = await bot.get_file(message.photo[-1].file_id)
+            sent_message = await bot.reply_to(message, download_pic_notify)
+            downloaded_file = await bot.download_file(file_path.file_path)
+            contents = {
+                "parts": [
+                    {"mime_type": "image/jpeg", "data": downloaded_file}, 
+                    {"text": prompt}
+                ]
+            }
+        await gemini.gemini_stream(bot, message, contents, model_1)
     except IndexError:
         await bot.reply_to(message, escape("Please add what you want to say after /gemini_stream. \nFor example: `/gemini_stream Who is john lennon?`"), parse_mode="MarkdownV2")
         return
-    await gemini.gemini_stream(bot, message, m, model_1)
 
 async def gemini_pro_stream_handler(message: Message, bot: TeleBot) -> None:
     try:
-        m = message.text.strip().split(maxsplit=1)[1].strip()
+        prompt = message.text.strip().split(maxsplit=1)[1].strip()
+        contents = {"text": prompt}
+        if message.photo:
+            file_path = await bot.get_file(message.photo[-1].file_id)
+            sent_message = await bot.reply_to(message, download_pic_notify)
+            downloaded_file = await bot.download_file(file_path.file_path)
+            contents = {
+                "parts": [
+                    {"mime_type": "image/jpeg", "data": downloaded_file}, 
+                    {"text": prompt}
+                ]
+            }
+        await gemini.gemini_stream(bot, message, contents, model_2)
     except IndexError:
         await bot.reply_to(message, escape("Please add what you want to say after /gemini_pro_stream. \nFor example: `/gemini_pro_stream Who is john lennon?`"), parse_mode="MarkdownV2")
         return
-    await gemini.gemini_stream(bot, message, m, model_2)
 
 async def clear(message: Message, bot: TeleBot) -> None:
     # Check if the player is already in gemini_player_dict.
