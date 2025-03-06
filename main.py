@@ -5,7 +5,7 @@ import google.generativeai as genai
 import re
 import telebot
 from telebot.async_telebot import AsyncTeleBot
-from telebot.types import  Message
+from telebot.types import Message
 from md2tgmd import escape
 import handers
 from config import conf, generation_config, safety_settings
@@ -57,4 +57,3 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.run(main())
-    
